@@ -1,0 +1,35 @@
+---
+interface Props {
+  sourceLabel: string;
+  sourceUrl: string;
+  sourceName: string;
+  assetsLabel: string;
+  assetsUrl: string;
+  assetsName: string;
+  assetsNote: string;
+}
+
+const {
+  sourceLabel,
+  sourceUrl,
+  sourceName,
+  assetsLabel,
+  assetsUrl,
+  assetsName,
+  assetsNote,
+} = Astro.props;
+---
+
+<>
+  {sourceLabel}
+  {" "}
+  <a href={sourceUrl} rel="license">{sourceName}</a>
+  {" "}
+  &middot;
+  {" "}
+  {assetsLabel}
+  {" "}
+  <a href={assetsUrl} rel="license">{assetsName}</a>
+  {" "}
+  {assetsNote}
+</>

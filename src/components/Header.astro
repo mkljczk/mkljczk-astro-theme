@@ -1,0 +1,198 @@
+---
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  siteTitle: string;
+  homeHref?: string;
+  navItems: NavItem[];
+  menuExpandTitle: string;
+  menuCollapseTitle: string;
+}
+
+const {
+  siteTitle,
+  homeHref = "/",
+  navItems,
+  menuExpandTitle,
+  menuCollapseTitle,
+} = Astro.props;
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href={homeHref} class="logo">{siteTitle}</a>
+    <button
+      class="hamburger"
+      title={menuExpandTitle}
+      data-expand-title={menuExpandTitle}
+      data-collapse-title={menuCollapseTitle}
+      aria-expanded="false"
+    >
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    <nav class="main-nav">
+      <ul>
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const hamburger = document.querySelector(".hamburger");
+  const nav = document.querySelector(".main-nav");
+
+  hamburger?.addEventListener("click", () => {
+    const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", (!isExpanded).toString());
+    hamburger.setAttribute(
+      "title",
+      isExpanded
+        ? hamburger.getAttribute("data-expand-title")!
+        : hamburger.getAttribute("data-collapse-title")!,
+    );
+    if (!isExpanded) {
+      hamburger.classList.add("open");
+      nav?.classList.add("opening");
+      setTimeout(() => {
+        nav?.classList.add("open");
+      }, 0);
+    } else {
+      hamburger.classList.remove("open");
+      nav?.classList.remove("open");
+      const handleAnimationEnd = () => {
+        nav?.classList.remove("opening");
+        nav?.removeEventListener("animationend", handleAnimationEnd);
+      };
+      if (nav) nav.addEventListener("animationend", handleAnimationEnd);
+    }
+  });
+</script>
+<style>
+  .site-header {
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .logo:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .main-nav ul {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    text-align: center;
+  }
+
+  .main-nav a {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+  }
+
+  .main-nav a:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 101;
+  }
+
+  .hamburger-line {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--color-text);
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  .hamburger.open .hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .hamburger.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.open .hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (max-width: 720px) {
+    .hamburger {
+      display: flex;
+    }
+
+    .main-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 2rem;
+      display: none;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.3s ease-in-out;
+
+      &.opening {
+        display: block;
+      }
+
+      &.open {
+        transform: scaleY(1);
+      }
+
+      ul {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+      }
+    }
+  }
+</style>

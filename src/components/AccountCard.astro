@@ -1,0 +1,155 @@
+---
+import { Picture } from "astro:assets";
+
+type Props =
+  | {
+      type: "account";
+      pictureSrc: ImageMetadata;
+      pictureAlt: string;
+      name: string;
+      handle: string;
+      href: string;
+      bio?: string;
+    }
+  | {
+      type: "cta";
+      heading: string;
+      description: string;
+      href: string;
+      linkText: string;
+    };
+
+const props = Astro.props;
+---
+
+<>
+  {
+    props.type === "account" ? (
+      <div class="account-card">
+        <div class="account-card-avatar">
+          <Picture
+            src={props.pictureSrc}
+            alt={props.pictureAlt}
+            width={68}
+            height={68}
+            formats={["avif", "webp"]}
+            quality="high"
+          />
+        </div>
+        <div class="account-card-info">
+          <h3 class="account-card-name">{props.name}</h3>
+          <a
+            href={props.href}
+            class="account-card-handle"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {props.handle}
+          </a>
+          <p class="account-card-bio">{props.bio}</p>
+        </div>
+      </div>
+    ) : (
+      <div class="account-card account-card-cta">
+        <div class="cta-content">
+          <h3>{props.heading}</h3>
+          <p>{props.description}</p>
+          <a
+            href={props.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-sm"
+          >
+            {props.linkText}
+          </a>
+        </div>
+      </div>
+    )
+  }
+</>
+<style>
+  .account-card {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .account-card-avatar {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 0.675rem;
+    overflow: hidden;
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-accent);
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .account-card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  .account-card-name {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.125rem;
+  }
+
+  .account-card-handle {
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .account-card-bio {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .account-card-cta {
+    background-color: var(--color-card-bg-secondary);
+    border-style: dashed;
+    /* justify-content: center; */
+  }
+
+  .cta-content {
+    h3 {
+      margin: 0 0 0.75rem 0;
+      color: var(--color-accent);
+    }
+
+    p {
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .account-card {
+      flex-direction: column;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .account-card-info {
+      align-items: center;
+    }
+  }
+</style>

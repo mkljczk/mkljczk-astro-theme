@@ -1,0 +1,14 @@
+{
+  "name": "@mkljczk/astro-theme",
+  "version": "0.0.1",
+  "type": "module",
+  "files": ["index.js"],
+  "peerDependencies": {
+    "astro": "^5.0.0"
+  },
+  "exports": {
+    "./components/*": "./src/components/*",
+    "./layouts/*": "./src/layouts/*",
+    "./styles/*": "./src/styles/*"
+  }
+}

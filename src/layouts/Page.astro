@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+type Props = CollectionEntry<"pages">["data"] & {
+  lang: string;
+};
+
+const { title, lang } = Astro.props;
+---
+
+<html lang={lang}>
+  <head>
+    <slot name="head" />
+  </head>
+
+  <body>
+    <slot name="header" />
+    <main>
+      <div class="content-container">
+        <header class="page-header">
+          <h1>{title}</h1>
+        </header>
+
+        <article class="page-content">
+          <slot />
+        </article>
+      </div>
+    </main>
+  </body>
+</html>

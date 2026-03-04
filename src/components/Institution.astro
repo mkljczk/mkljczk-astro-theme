@@ -1,0 +1,45 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<div class="institution-card">
+  {
+    title ? (
+      <h3 set:html={title} />
+    ) : (
+      <h3>
+        <slot name="title" />
+      </h3>
+    )
+  }
+  <slot />
+  <p>{description}</p>
+</div>
+<style>
+  .institution-card {
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 600px) {
+      padding: 1rem;
+    }
+  }
+</style>

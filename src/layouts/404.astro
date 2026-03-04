@@ -1,0 +1,72 @@
+---
+type Props = {
+  lang: string;
+  errorHeading: string;
+  errorDescription: string;
+  homeLinkText: string;
+  homeLinkHref: string;
+};
+
+const { lang, errorHeading, errorDescription, homeLinkText, homeLinkHref } =
+  Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <slot name="head" />
+  </head>
+  <body>
+    <slot name="header" />
+    <main>
+      <div class="content-container">
+        <div class="error-page">
+          <h1>404</h1>
+          <h2>{errorHeading}</h2>
+          <p>{errorDescription}</p>
+          <p>
+            <a href={homeLinkHref} class="btn btn-primary">{homeLinkText}</a>
+          </p>
+        </div>
+      </div>
+    </main>
+    <slot name="footer" />
+  </body>
+</html>
+
+<style>
+  .error-page {
+    text-align: center;
+    padding: 4rem 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .error-page h1 {
+    font-size: 6rem;
+    font-weight: 900;
+    color: var(--color-accent);
+    line-height: 1;
+
+    @media (max-width: 600px) {
+      font-size: 4rem;
+    }
+  }
+
+  .error-page h2 {
+    font-size: 2rem;
+    margin: 1rem 0;
+
+    @media (max-width: 600px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .error-page p {
+    margin: 1rem 0;
+  }
+
+  .error-page .btn {
+    margin-top: 0.5rem;
+  }
+</style>
