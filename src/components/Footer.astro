@@ -15,9 +15,15 @@ interface Props {
   links: FooterLink[];
   copyText: string;
   socialLinks?: FooterSocialLink[];
+  withTransFlag?: boolean;
 }
 
-const { links, copyText, socialLinks = [] } = Astro.props;
+const {
+  links,
+  copyText,
+  socialLinks = [],
+  withTransFlag = false,
+} = Astro.props;
 ---
 
 <footer class="site-footer">
@@ -41,10 +47,17 @@ const { links, copyText, socialLinks = [] } = Astro.props;
     }
     <div class="footer-top">
       <div class="footer-links">
-        {links.map((link) => <a href={link.href} target={link.target}>{link.label}</a>)}
+        {
+          links.map((link) => (
+            <a href={link.href} target={link.target}>
+              {link.label}
+            </a>
+          ))
+        }
       </div>
       <div class="footer-copy">
         {copyText}
+        {withTransFlag && <span aria-hidden="true"> 🏳️‍⚧️</span>}
       </div>
     </div>
     {
