@@ -1,0 +1,95 @@
+---
+import type { CollectionEntry } from "astro:content";
+import DocsSidebar from "../components/DocsSidebar.astro";
+import DocsTableOfContents from "../components/DocsTableOfContents.astro";
+
+interface Props {
+  lang: string;
+  headings: { depth: number; slug: string; text: string }[];
+  currentId: string;
+  sections: {
+    name: string;
+    items: CollectionEntry<"docs">[];
+  }[];
+  tocButtonTitle: string;
+  tocHeading: string;
+  sidebarHeading: string;
+}
+
+const {
+  lang,
+  headings,
+  currentId,
+  sections,
+  tocButtonTitle,
+  tocHeading,
+  sidebarHeading,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <slot name="head" />
+  </head>
+  <body class="docs">
+    <slot name="header" />
+    <div class="docs-wrapper">
+      <DocsSidebar
+        currentId={currentId}
+        sections={sections}
+        heading={sidebarHeading}
+      />
+      <main class="docs-main">
+        <article class="page-content docs-content">
+          <slot />
+        </article>
+      </main>
+      {
+        headings.length > 0 && (
+          <DocsTableOfContents
+            headings={headings}
+            buttonTitle={tocButtonTitle}
+            tocHeading={tocHeading}
+          />
+        )
+      }
+    </div>
+    <slot name="footer" />
+  </body>
+</html>
+
+<style>
+  .docs-wrapper {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    min-height: calc(100vh - 4rem);
+  }
+
+  .docs-main {
+    min-width: 0;
+    padding: 2rem 2.5rem;
+  }
+
+  .docs-content {
+    max-width: 48rem;
+  }
+
+  @media (max-width: 900px) {
+    .docs-wrapper {
+      grid-template-columns: 14rem 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .docs-wrapper {
+      grid-template-columns: 1fr;
+    }
+
+    .docs-main {
+      padding: 1.5rem;
+    }
+  }
+</style>

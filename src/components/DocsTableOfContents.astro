@@ -1,0 +1,184 @@
+---
+import ListIcon from "@phosphor-icons/core/regular/list-dashes.svg?raw";
+
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+  buttonTitle: string;
+  tocHeading: string;
+}
+
+const { headings, buttonTitle, tocHeading } = Astro.props;
+
+const tocHeadings = headings.filter((h) => h.depth <= 3);
+---
+
+{
+  tocHeadings.length > 1 && (
+    <>
+      <button
+        id="toc-toggle"
+        class="toc-toggle"
+        title={buttonTitle}
+        aria-label={buttonTitle}
+        aria-expanded="false"
+        aria-controls="toc-floating"
+      >
+        <Fragment set:html={ListIcon} />
+      </button>
+
+      <div id="toc-floating" class="toc-floating" hidden>
+        <nav>
+          <h4 class="toc-title">{tocHeading}</h4>
+          <ul>
+            {tocHeadings.map((heading) => (
+              <li class:list={[`toc-depth-${heading.depth}`]}>
+                <a href={`#${heading.slug}`}>{heading.text}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </>
+  )
+}
+
+<script>
+  const btn = document.getElementById("toc-toggle");
+  const panel = document.getElementById("toc-floating");
+
+  function setOpen(open: boolean) {
+    if (!btn || !panel) return;
+    panel.hidden = !open;
+    btn.setAttribute("aria-expanded", String(open));
+  }
+
+  if (btn && panel) {
+    if (window.innerWidth >= 1600) setOpen(true);
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setOpen(!!panel.hidden);
+    });
+
+    panel.addEventListener("click", (e) => {
+      if (
+        (e.target as HTMLElement).tagName === "A" &&
+        window.innerWidth < 1600
+      ) {
+        setOpen(false);
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!panel.hidden && !panel.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    });
+  }
+</script>
+
+<style>
+  .docs-toc {
+    position: sticky;
+    top: 3.5rem;
+    height: calc(100vh - 3.5rem);
+    overflow-y: auto;
+    padding: 1.5rem 1.5rem 2rem 1rem;
+    width: 14rem;
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+  }
+
+  .toc-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.75rem;
+  }
+
+  .docs-toc ul,
+  .toc-floating ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 1px solid var(--color-border);
+  }
+
+  .docs-toc li a,
+  .toc-floating li a {
+    display: block;
+    padding: 0.25rem 0.75rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+  }
+
+  .docs-toc li a:hover,
+  .toc-floating li a:hover {
+    color: var(--color-text);
+    border-left-color: var(--color-accent);
+  }
+
+  .toc-depth-3 a {
+    padding-left: 1.5rem;
+    font-size: 0.775rem;
+  }
+
+  .toc-toggle {
+    display: flex;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 200;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-card-bg);
+    color: var(--color-text);
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    align-items: center;
+    justify-content: center;
+    transition:
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .toc-toggle:hover {
+    background-color: var(--color-bg-secondary);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .toc-toggle :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+  }
+
+  .toc-floating {
+    position: fixed;
+    bottom: 5rem;
+    right: 1.5rem;
+    z-index: 199;
+    width: 16rem;
+    max-height: 70vh;
+    overflow-y: auto;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.8125rem;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .toc-floating .toc-title {
+    margin-bottom: 0.625rem;
+  }
+</style>
