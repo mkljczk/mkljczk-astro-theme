@@ -2,9 +2,13 @@
 interface Props {
   title?: string;
   description?: string;
+  href?: string;
+  hrefText?: string;
+  hrefAlt?: string;
+  hrefTextAlt?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, href, hrefText, hrefAlt, hrefTextAlt } = Astro.props;
 ---
 
 <div class="institution-card">
@@ -19,6 +23,17 @@ const { title, description } = Astro.props;
   }
   <slot />
   <p>{description}</p>
+
+  {href && (
+    <a class={hrefAlt ? "btn btn-sm" : "btn btn-secondary btn-sm"} href={href} target="_blank" rel="noopener noreferrer">
+      {hrefText || href}
+    </a>
+  )}
+  {hrefAlt && (
+    <a class="btn btn-secondary btn-sm" href={hrefAlt} target="_blank" rel="noopener noreferrer">
+      {hrefTextAlt || hrefAlt}
+    </a>
+  )}
 </div>
 <style>
   .institution-card {
@@ -36,6 +51,14 @@ const { title, description } = Astro.props;
 
     p {
       margin-bottom: 0;
+    }
+
+    .btn {
+      margin-top: 0.5rem;
+    }
+
+    .btn + .btn {
+      margin-left: 0.5rem;
     }
 
     @media (max-width: 600px) {

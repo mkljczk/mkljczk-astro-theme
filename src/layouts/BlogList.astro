@@ -67,7 +67,9 @@ const nextHref =
                     <h2>
                       <a href={`/blog/${post.id}/`}>{post.data.title}</a>
                     </h2>
-                    <p>{post.data.description}</p>
+                    {post.data.description?.trim() && (
+                      <p>{post.data.description}</p>
+                    )}
                     <a
                       href={`/blog/${post.id}/`}
                       class="btn btn-sm btn-secondary"
