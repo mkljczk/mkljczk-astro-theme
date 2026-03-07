@@ -5,8 +5,8 @@ import { Picture } from "astro:assets";
 interface Props {
   heading: string;
   subheading?: string;
-  buttonText: string;
-  buttonLink: string;
+  buttonText?: string;
+  buttonLink?: string;
   buttonTarget?: string;
   button2Text?: string;
   button2Link?: string;
@@ -34,7 +34,13 @@ const {
     <h2>{heading}</h2>
     {subheading && <p>{subheading}</p>}
     <div class="section-buttons">
-      <a href={buttonLink} target={buttonTarget} class="btn">{buttonText}</a>
+      {
+        buttonText && buttonLink && (
+          <a href={buttonLink} target={buttonTarget} class="btn">
+            {buttonText}
+          </a>
+        )
+      }
       {
         button2Text && button2Link && (
           <a
