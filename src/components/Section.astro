@@ -33,26 +33,26 @@ const {
   <div class="section-content">
     <h2>{heading}</h2>
     {subheading && <p>{subheading}</p>}
-    <div class="section-buttons">
-      {
-        buttonText && buttonLink && (
-          <a href={buttonLink} target={buttonTarget} class="btn">
-            {buttonText}
-          </a>
-        )
-      }
-      {
-        button2Text && button2Link && (
-          <a
-            href={button2Link}
-            target={button2Target}
-            class="btn btn-secondary"
-          >
-            {button2Text}
-          </a>
-        )
-      }
-    </div>
+    {
+      (buttonText || button2Text) && (
+        <div class="section-buttons">
+          {buttonText && (
+            <a href={buttonLink} target={buttonTarget} class="btn">
+              {buttonText}
+            </a>
+          )}
+          {button2Text && (
+            <a
+              href={button2Link}
+              target={button2Target}
+              class="btn btn-secondary"
+            >
+              {button2Text}
+            </a>
+          )}
+        </div>
+      )
+    }
   </div>
   {
     imageSrc && (
@@ -105,6 +105,10 @@ const {
     }
 
     p {
+      margin-bottom: 0;
+    }
+
+    p:not(:last-child) {
       margin-bottom: 1.5rem;
     }
   }

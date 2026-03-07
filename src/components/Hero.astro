@@ -1,11 +1,51 @@
 ---
-const { heading, subheading } = Astro.props;
+interface Props {
+  heading: string;
+  subheading: string;
+  buttonText: string;
+  buttonLink: string;
+  buttonTarget?: string;
+  button2Text?: string;
+  button2Link?: string;
+  button2Target?: string;
+}
+
+const {
+  heading,
+  subheading,
+  buttonText,
+  buttonLink,
+  buttonTarget,
+  button2Text,
+  button2Link,
+  button2Target,
+} = Astro.props;
 ---
 
 <section class="hero">
   <div class="container">
     <h1>{heading}</h1>
     <p>{subheading}</p>
+    {
+      (buttonText || button2Text) && (
+        <div class="hero-buttons">
+          {buttonText && (
+            <a href={buttonLink} target={buttonTarget} class="btn">
+              {buttonText}
+            </a>
+          )}
+          {button2Text && (
+            <a
+              href={button2Link}
+              target={button2Target}
+              class="btn btn-secondary"
+            >
+              {button2Text}
+            </a>
+          )}
+        </div>
+      )
+    }
   </div>
 </section>
 <style>
@@ -24,6 +64,14 @@ const { heading, subheading } = Astro.props;
       max-width: 900px;
       margin: 0 auto;
       white-space: pre-wrap;
+    }
+
+    &-buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
     }
   }
 
