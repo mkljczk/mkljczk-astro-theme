@@ -4,11 +4,13 @@ import { Picture } from "astro:assets";
 
 interface Props {
   heading: string;
-  subheading: string;
+  subheading?: string;
   buttonText: string;
   buttonLink: string;
+  buttonTarget?: string;
   button2Text?: string;
   button2Link?: string;
+  button2Target?: string;
   imageSrc?: ImageMetadata;
   imageAlt?: string;
 }
@@ -18,8 +20,10 @@ const {
   subheading,
   buttonText,
   buttonLink,
+  buttonTarget,
   button2Text,
   button2Link,
+  button2Target,
   imageSrc,
   imageAlt,
 } = Astro.props;
@@ -28,21 +32,25 @@ const {
 <article class="section-card">
   <div class="section-content">
     <h2>{heading}</h2>
-    <p>{subheading}</p>
+    {subheading && <p>{subheading}</p>}
     <div class="section-buttons">
-      <a href={buttonLink} class="btn">{buttonText}</a>
+      <a href={buttonLink} target={buttonTarget} class="btn">{buttonText}</a>
       {
         button2Text && button2Link && (
-          <a href={button2Link} class="btn btn-secondary">
+          <a
+            href={button2Link}
+            target={button2Target}
+            class="btn btn-secondary"
+          >
             {button2Text}
           </a>
         )
       }
     </div>
   </div>
-  <div class="section-image">
-    {
-      imageSrc && (
+  {
+    imageSrc && (
+      <div class="section-image">
         <Picture
           src={imageSrc}
           alt={imageAlt ?? heading}
@@ -52,9 +60,9 @@ const {
           formats={["avif", "webp"]}
           quality="high"
         />
-      )
-    }
-  </div>
+      </div>
+    )
+  }
 </article>
 <style>
   .section-card {
@@ -64,6 +72,10 @@ const {
     align-items: center;
     padding: 2rem 0;
     border-bottom: 1px solid var(--color-border);
+
+    &:not(:has(.section-image)) {
+      grid-template-columns: 1fr;
+    }
 
     &:first-child {
       padding-top: 0;
