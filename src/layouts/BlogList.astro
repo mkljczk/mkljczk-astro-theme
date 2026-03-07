@@ -1,0 +1,290 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "../components/FormattedDate.astro";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+  currentPage: number;
+  totalPages: number;
+  lang: string;
+  basePath?: string;
+  pageHeading: string;
+  pageSubheading?: string;
+  readMoreText: string;
+  paginationLabel: string;
+  paginationPage: string;
+  paginationPrevious: string;
+  paginationNext: string;
+}
+
+const {
+  posts,
+  currentPage,
+  totalPages,
+  lang,
+  basePath = "/blog",
+  pageHeading,
+  pageSubheading,
+  readMoreText,
+  paginationLabel,
+  paginationPage,
+  paginationPrevious,
+  paginationNext,
+} = Astro.props;
+
+const getPageHref = (pageNumber: number) =>
+  pageNumber === 1 ? basePath : `${basePath}/${pageNumber}`;
+
+const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+const prevHref = currentPage > 1 ? getPageHref(currentPage - 1) : undefined;
+const nextHref =
+  currentPage < totalPages ? getPageHref(currentPage + 1) : undefined;
+---
+
+<html lang={lang}>
+  <head>
+    <slot name="head" />
+  </head>
+  <body>
+    <slot name="header" />
+    <main>
+      <section class="page-header">
+        <div class="container">
+          <h1>{pageHeading}</h1>
+          {pageSubheading && <p>{pageSubheading}</p>}
+        </div>
+      </section>
+      <section class="blog-list">
+        <div class="container">
+          <ul>
+            {
+              posts.map((post) => (
+                <li>
+                  <article class="blog-card">
+                    <div class="blog-meta">
+                      <FormattedDate date={post.data.pubDate} lang={lang} />
+                    </div>
+                    <h2>
+                      <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                    </h2>
+                    <p>{post.data.description}</p>
+                    <a
+                      href={`/blog/${post.id}/`}
+                      class="btn btn-sm btn-secondary"
+                    >
+                      {readMoreText}
+                    </a>
+                  </article>
+                </li>
+              ))
+            }
+          </ul>
+
+          {
+            totalPages > 1 && (
+              <nav class="pagination" aria-label={paginationLabel}>
+                <div class="pagination-direction">
+                  {prevHref ? (
+                    <a href={prevHref} class="pagination-link" rel="prev">
+                      <span aria-hidden="true">←</span> {paginationPrevious}
+                    </a>
+                  ) : (
+                    <span
+                      class="pagination-link is-disabled"
+                      aria-hidden="true"
+                    >
+                      ← {paginationPrevious}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <p class="sr-only">
+                    {paginationPage} {currentPage} / {totalPages}
+                  </p>
+                  <div class="pagination-links">
+                    {pageNumbers.map((pageNumber) => {
+                      const isCurrent = pageNumber === currentPage;
+
+                      return isCurrent ? (
+                        <span
+                          class="pagination-link is-current"
+                          aria-current="page"
+                        >
+                          {pageNumber}
+                        </span>
+                      ) : (
+                        <a
+                          href={getPageHref(pageNumber)}
+                          class="pagination-link"
+                          aria-label={`${paginationPage} ${pageNumber}`}
+                        >
+                          {pageNumber}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div class="pagination-direction pagination-direction-next">
+                  {nextHref ? (
+                    <a href={nextHref} class="pagination-link" rel="next">
+                      {paginationNext} <span aria-hidden="true">→</span>
+                    </a>
+                  ) : (
+                    <span
+                      class="pagination-link is-disabled"
+                      aria-hidden="true"
+                    >
+                      {paginationNext} →
+                    </span>
+                  )}
+                </div>
+              </nav>
+            )
+          }
+        </div>
+      </section>
+    </main>
+    <slot name="footer" />
+  </body>
+  <style>
+    .blog-list {
+      padding: 2rem 0 4rem;
+
+      ul {
+        list-style: none;
+      }
+
+      @media (max-width: 900px) {
+        padding: 1rem 0 3rem;
+      }
+
+      @media (max-width: 600px) {
+        padding: 0 0 3rem;
+      }
+    }
+
+    .blog-card {
+      background-color: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+
+      &:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+      }
+
+      h2 {
+        margin-bottom: 0.75rem;
+        margin-top: 0.5rem;
+
+        a {
+          color: var(--color-text);
+
+          &:hover {
+            color: var(--color-accent);
+            text-decoration: none;
+          }
+        }
+      }
+
+      p {
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .pagination {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      gap: 1rem;
+      padding-top: 1rem;
+    }
+
+    .pagination-direction {
+      display: flex;
+    }
+
+    .pagination-direction-next {
+      justify-content: flex-end;
+    }
+
+    .pagination-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .pagination-link {
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      background-color: var(--color-card-bg);
+      padding: 0 0.75rem;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      text-decoration: none;
+      line-height: calc(2.75rem - 2px);
+      transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+
+      &:hover {
+        border-color: var(--color-accent);
+      }
+
+      &.is-current {
+        background-color: var(--color-accent);
+        border-color: var(--color-accent);
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      &.is-disabled {
+        opacity: 0.45;
+        pointer-events: none;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .pagination {
+        grid-template-columns: 1fr;
+      }
+
+      .pagination-direction,
+      .pagination-direction-next {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .blog-card {
+        padding: 1.5rem;
+      }
+
+      .pagination {
+        gap: 1.25rem;
+      }
+
+      .pagination-step {
+        width: 100%;
+      }
+    }
+  </style>
+</html>
